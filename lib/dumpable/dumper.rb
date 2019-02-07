@@ -46,9 +46,9 @@ module Dumpable
         end
       elsif dumps.is_a?(Symbol) || dumps.is_a?(String)
         Array(object.send(dumps)).each do |child_object|
-          reflection = object.class.reflections[dumps.to_sym]
+          reflection = object.class.reflections[dumps.to_s]
           if reflection.macro == :belongs_to
-            object.send("#{reflection.association_foreign_key}=", object.id + @id_padding)
+            object.send("#{reflection.association_foreign_key}=", child_object.id + @id_padding)
           elsif [:has_many, :has_one].include? reflection.macro
             if reflection.respond_to?(:foreign_key)
               child_object.send("#{reflection.foreign_key}=", object.id + @id_padding)
@@ -91,8 +91,8 @@ module Dumpable
           '0'
         when "TrueClass"
           '1'
-        when "ActiveSupport::HashWithIndifferentAccess"
-          "'#{value.to_yaml.gsub(/'/, "\\\\'")}'"
+        when "Array", "Hash"
+          "'#{value.to_json.gsub(/'/, "''").gsub("\\", "\\\\\\")}'"
         else
           "'#{value}'"
       end
