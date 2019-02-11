@@ -86,7 +86,7 @@ module Dumpable
         when "Fixnum"
           value
         when "String"
-          "'#{value.gsub(/'/, "\\\\'")}'"
+          "'#{value.gsub(/'/, "''").gsub("\\", "\\\\\\")}'"
         when "FalseClass"
           '0'
         when "TrueClass"
